@@ -1295,7 +1295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ARImageSender
   serverUrl: ws://180.68.109.231:8000/ws
-  sendRate: 1
+  sendRate: 0.01
   jpgQuality: 100
   cameraManager: {fileID: 331264299}
   objectPlacer: {fileID: 150719563}
