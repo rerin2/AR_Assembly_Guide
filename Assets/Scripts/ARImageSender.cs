@@ -8,13 +8,14 @@ using Unity.Collections;
 
 public class ARImageSender : MonoBehaviour
 {
-    [Header("Network Settings")]
-    public string serverUrl = "ws://180.68.109.231:8000/ws";
+    [Header("Default Network Settings (최초 1회만 사용됨)")]
+    public string defaultIp = "180.68.109.231";
+    public string defaultPort = "8000";
     
     [Header("Capture Settings")]
-    public float sendRate = 0.1f; // ~초마다 전송
+    public float defaultSendRate = 0.01f; 
     [Range(10, 100)]
-    public int jpgQuality = 100;   // 화질
+    public int jpgQuality = 100;   
     
     [Header("AR References")]
     public ARCameraManager cameraManager;
@@ -34,28 +35,36 @@ public class ARImageSender : MonoBehaviour
     public int scaledWidth;
     public int scaledHeight;
 
-    // --- [추가] 화면 UI 입력을 위한 변수들 ---
-    private string inputUrl;
+    // 내부적으로 사용할 진짜 연결 주소와 전송 주기
+    private string currentServerUrl;
+    private float currentSendRate;
+
+    // --- 화면 UI 입력을 위한 변수들 ---
+    private string inputIp;
+    private string inputPort;
     private string inputSendRate;
+    
     private GUIStyle style;
     private GUIStyle inputStyle;
     private GUIStyle buttonStyle;
-    // -----------------------------------------
     
     void Start()
     {
-        // UI 입력칸에 현재 설정된 기본값 채워넣기
-        inputUrl = serverUrl;
-        inputSendRate = sendRate.ToString();
+        // 1. 기기에 저장된 이전 설정 불러오기 (없으면 기본값 사용)
+        inputIp = PlayerPrefs.GetString("SavedIP", defaultIp);
+        inputPort = PlayerPrefs.GetString("SavedPort", defaultPort);
+        currentSendRate = PlayerPrefs.GetFloat("SavedRate", defaultSendRate);
+        inputSendRate = currentSendRate.ToString();
 
-        // 앱 시작 시 최초 1회 연결 시도
+        // 2. 입력받은 IP와 포트를 합쳐서 완전한 웹소켓 주소 조립
+        currentServerUrl = $"ws://{inputIp}:{inputPort}/ws";
+
+        // 3. 불러온 설정으로 최초 연결
         ConnectToServer();
     }
 
-    // --- [추가/수정] 연결 로직을 별도 함수로 분리 ---
     private async void ConnectToServer()
     {
-        // 이미 연결된 소켓이 있다면 안전하게 닫기
         if (websocket != null)
         {
             if (websocket.State == WebSocketState.Open || websocket.State == WebSocketState.Connecting)
@@ -64,8 +73,8 @@ public class ARImageSender : MonoBehaviour
             }
         }
 
-        debugMessage = $"서버 연결 시도 중...\n({serverUrl})";
-        websocket = new WebSocket(serverUrl);
+        debugMessage = $"서버 연결 시도 중...\n({currentServerUrl})";
+        websocket = new WebSocket(currentServerUrl);
 
         websocket.OnOpen += () => debugMessage = "✅ 접속 성공!";
         
@@ -106,7 +115,7 @@ public class ARImageSender : MonoBehaviour
         if (websocket != null && websocket.State == WebSocketState.Open && !isBusy)
         {
             timer += Time.deltaTime;
-            if (timer >= sendRate)
+            if (timer >= currentSendRate)
             {
                 timer = 0f;
                 StartCoroutine(CaptureAndSend());
@@ -166,7 +175,7 @@ public class ARImageSender : MonoBehaviour
                 string base64String = System.Convert.ToBase64String(imageBytes);
 
                 websocket.SendText(base64String); 
-                debugMessage = $"✅ 전송 중.. ({scaledWidth}x{scaledHeight})\n틱레이트: {sendRate}초";
+                debugMessage = $"✅ 전송 중.. ({scaledWidth}x{scaledHeight})\n틱레이트: {currentSendRate}초";
 
                 Destroy(finalTexture);
             }
@@ -198,10 +207,8 @@ public class ARImageSender : MonoBehaviour
             {
                 int rotatedX = y;
                 int rotatedY = w - 1 - x;
-
                 int finalX = applyMirror ? (newW - 1 - rotatedX) : rotatedX;
                 int finalY = rotatedY;
-
                 newPixels[finalY * newW + finalX] = originalPixels[y * w + x];
             }
         }
@@ -213,56 +220,64 @@ public class ARImageSender : MonoBehaviour
         return resultTexture;
     }
 
-    // --- [수정] 화면에 UI (텍스트 입력창 & 버튼) 그리기 ---
     void OnGUI()
     {
-        // 폰트 크기 및 색상 초기화 (최초 1회)
         if (style == null)
         {
-            style = new GUIStyle(GUI.skin.label) { fontSize = 40 };
+            style = new GUIStyle(GUI.skin.label) { fontSize = 35 };
             style.normal.textColor = Color.yellow;
             style.wordWrap = true;
 
-            inputStyle = new GUIStyle(GUI.skin.textField) { fontSize = 40 };
-            buttonStyle = new GUIStyle(GUI.skin.button) { fontSize = 40 };
+            inputStyle = new GUIStyle(GUI.skin.textField) { fontSize = 35 };
+            buttonStyle = new GUIStyle(GUI.skin.button) { fontSize = 35 };
         }
 
-        // 1. IP 주소 입력 칸
-        GUI.Label(new Rect(20, 20, 200, 60), "서버 주소:", style);
-        inputUrl = GUI.TextField(new Rect(230, 20, 700, 60), inputUrl, inputStyle);
+        // 1. IP 주소 (가로로 배치)
+        GUI.Label(new Rect(20, 20, 80, 60), "IP:", style);
+        inputIp = GUI.TextField(new Rect(100, 20, 400, 60), inputIp, inputStyle);
 
-        // 2. 전송 속도 입력 칸
-        GUI.Label(new Rect(20, 100, 200, 60), "전송(초):", style);
-        inputSendRate = GUI.TextField(new Rect(230, 100, 200, 60), inputSendRate, inputStyle);
+        // 2. 포트 번호 (IP 바로 옆에 배치)
+        GUI.Label(new Rect(520, 20, 100, 60), "포트:", style);
+        inputPort = GUI.TextField(new Rect(620, 20, 200, 60), inputPort, inputStyle);
 
-        // 3. 재연결 및 적용 버튼
-        if (GUI.Button(new Rect(450, 100, 480, 60), "🚀 설정 적용 및 재연결", buttonStyle))
+        // 3. 전송 주기
+        GUI.Label(new Rect(20, 100, 150, 60), "주기(초):", style);
+        inputSendRate = GUI.TextField(new Rect(180, 100, 150, 60), inputSendRate, inputStyle);
+
+        // 4. 저장 및 재연결 버튼
+        if (GUI.Button(new Rect(350, 100, 470, 60), "💾 저장 및 재연결", buttonStyle))
         {
             ApplySettingsAndReconnect();
         }
 
-        // 4. 상태 메시지 (위치를 아래로 내림)
+        // 5. 상태 메시지 출력
         GUI.Label(new Rect(20, 180, Screen.width - 40, 500), debugMessage, style);
     }
 
-    // 버튼을 눌렀을 때 실행되는 함수
     private void ApplySettingsAndReconnect()
     {
-        // 입력받은 주소 적용
-        serverUrl = inputUrl;
+        // 1. 기기에 현재 입력된 값 저장 (앱을 꺼도 유지됨!)
+        PlayerPrefs.SetString("SavedIP", inputIp);
+        PlayerPrefs.SetString("SavedPort", inputPort);
 
-        // 입력받은 글자를 숫자로 변환 시도
         if (float.TryParse(inputSendRate, out float parsedRate))
         {
-            sendRate = parsedRate;
+            currentSendRate = parsedRate;
+            PlayerPrefs.SetFloat("SavedRate", currentSendRate);
         }
         else
         {
-            debugMessage = "⚠️ 전송 주기는 숫자만 입력해주세요! (예: 0.5)";
-            return; // 숫자가 아니면 멈춤
+            debugMessage = "⚠️ 전송 주기는 숫자만 입력해주세요!";
+            return; 
         }
 
-        // 상태 초기화 후 재연결
+        // 디스크에 확실히 저장
+        PlayerPrefs.Save(); 
+
+        // 2. 주소 조립 ("ws://" 와 "/ws"는 코드가 알아서 붙여줌)
+        currentServerUrl = $"ws://{inputIp}:{inputPort}/ws";
+
+        // 3. 재연결 수행
         isBusy = false;
         timer = 0f;
         ConnectToServer();

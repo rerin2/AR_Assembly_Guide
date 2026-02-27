@@ -1294,8 +1294,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa046076960c86c4b97f5658642418c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ARImageSender
-  serverUrl: ws://180.68.109.231:8000/ws
-  sendRate: 0.01
+  defaultIp: 180.68.109.231
+  defaultPort: 8000
+  defaultSendRate: 0.01
   jpgQuality: 100
   cameraManager: {fileID: 331264299}
   objectPlacer: {fileID: 150719563}
