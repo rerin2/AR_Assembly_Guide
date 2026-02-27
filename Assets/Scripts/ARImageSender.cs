@@ -166,7 +166,7 @@ public class ARImageSender : MonoBehaviour
                 string base64String = System.Convert.ToBase64String(imageBytes);
 
                 websocket.SendText(base64String); 
-                debugMessage = $"✅ 전송 중.. ({scaledWidth}x{scaledHeight})\n대기시간: {sendRate}초";
+                debugMessage = $"✅ 전송 중.. ({scaledWidth}x{scaledHeight})\n틱레이트: {sendRate}초";
 
                 Destroy(finalTexture);
             }
