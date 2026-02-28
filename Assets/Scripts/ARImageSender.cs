@@ -190,7 +190,8 @@ public class ARImageSender : MonoBehaviour
             image.Dispose(); 
         }
     }
-
+    
+    // 카메라 화면이 뒤집히고 거울모드로 나오는 문제가 있어 코드로 원래 상태로 출력되게 함 
     private Texture2D RotateAndMirrorTexture(Texture2D original, bool applyMirror)
     {
         Color32[] originalPixels = original.GetPixels32();
