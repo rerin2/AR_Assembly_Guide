@@ -6561,7 +6561,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MarkerTrackingController
   arTrackedImageManager: {fileID: 1569006110}
-  _legoAnchorPrefab: {fileID: 3905519316520541080, guid: 59742c09c98089a448176437637430d8, type: 3}
+  _legoAnchorPrefab: {fileID: 6924761419946151994, guid: 74d2ab88c458535458c6db8ad02f613b, type: 3}
 --- !u!114 &1569006110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6579,7 +6579,7 @@ MonoBehaviour:
       m_Calls: []
   m_SerializedLibrary: {fileID: 11400000, guid: ca0602a8165f99843999110b35de0ba5, type: 2}
   m_MaxNumberOfMovingImages: 1
-  m_TrackedImagePrefab: {fileID: 3905519316520541080, guid: 59742c09c98089a448176437637430d8, type: 3}
+  m_TrackedImagePrefab: {fileID: 6924761419946151994, guid: 74d2ab88c458535458c6db8ad02f613b, type: 3}
 --- !u!1 &1756045394
 GameObject:
   m_ObjectHideFlags: 0

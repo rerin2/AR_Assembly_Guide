@@ -50,16 +50,16 @@ public class ARImageSender : MonoBehaviour
     
     void Start()
     {
-        // 1. 기기에 저장된 이전 설정 불러오기 (없으면 기본값 사용)
+        // 기기에 저장된 이전 설정 불러오기 (없으면 기본값 사용)
         inputIp = PlayerPrefs.GetString("SavedIP", defaultIp);
         inputPort = PlayerPrefs.GetString("SavedPort", defaultPort);
         currentSendRate = PlayerPrefs.GetFloat("SavedRate", defaultSendRate);
         inputSendRate = currentSendRate.ToString();
 
-        // 2. 입력받은 IP와 포트를 합쳐서 완전한 웹소켓 주소 조립
+        // 입력받은 IP와 포트를 합쳐서 완전한 웹소켓 주소 조립
         currentServerUrl = $"ws://{inputIp}:{inputPort}/ws";
 
-        // 3. 불러온 설정으로 최초 연결
+        // 불러온 설정으로 최초 연결
         ConnectToServer();
     }
 
@@ -76,26 +76,27 @@ public class ARImageSender : MonoBehaviour
         debugMessage = $"서버 연결 시도 중...\n({currentServerUrl})";
         websocket = new WebSocket(currentServerUrl);
 
-        websocket.OnOpen += () => debugMessage = "✅ 접속 성공!";
+        websocket.OnOpen += () => debugMessage = " 접속 성공!";
         
         websocket.OnError += (e) => 
         {
-            debugMessage = "❌ 에러: " + e;
+            debugMessage = " 에러: " + e;
             Debug.LogError("WebSocket Error: " + e);
         };
         
         websocket.OnClose += (e) => 
         {
-            debugMessage = $"⚠️ 연결 종료 (Code: {e})";
+            debugMessage = $" 연결 종료 (Code: {e})";
             Debug.Log("WebSocket Closed: " + e);
         };
         
+        // 엣지로부터 메시지가 도착했을 때 자동으로 실행됨
         websocket.OnMessage += (bytes) =>
         {
             string message = Encoding.UTF8.GetString(bytes);
             if (objectPlacer != null)
             {
-                objectPlacer.OnDataReceived(message);
+                objectPlacer.OnDataReceived(message);   // 데이터 처리 
             }
             isBusy = false;
         };
@@ -130,7 +131,7 @@ public class ARImageSender : MonoBehaviour
 
         if (cameraManager == null)
         {
-            debugMessage = "❌ ARCameraManager가 연결되지 않았습니다.";
+            debugMessage = " ARCameraManager가 연결되지 않았습니다.";
             isBusy = false;
             yield break;
         }
@@ -143,40 +144,50 @@ public class ARImageSender : MonoBehaviour
 
         try
         {
+            // 해상도 축소 
             scaledWidth = Mathf.RoundToInt(image.width * resolutionScale);
             scaledHeight = Mathf.RoundToInt(image.height * resolutionScale);
-
+            
+            // 카메라에서 바로 오는 데이터 규칙
             var conversionParams = new XRCpuImage.ConversionParams
             {
-                inputRect = new RectInt(0, 0, image.width, image.height),
-                outputDimensions = new Vector2Int(scaledWidth, scaledHeight),
-                outputFormat = TextureFormat.RGBA32, 
-                transformation = XRCpuImage.Transformation.None
+                inputRect = new RectInt(0, 0, image.width, image.height), // 원본 이미지 전체 영역을 사용
+                outputDimensions = new Vector2Int(scaledWidth, scaledHeight),// 위에서 계산한 축소된 해상도로 출력
+                outputFormat = TextureFormat.RGBA32, // 표준 컬러 포맷
+                transformation = XRCpuImage.Transformation.None // 회전하지 않음 
             };
-
+            
+            // 버퍼 크기 
             int size = image.GetConvertedDataSize(conversionParams);
+            
+            // using 문을 사용하여 NativeArray(C++ 수준의 빠른 메모리)를 임시(Allocator.Temp)로 빌림
+            // using 블록이 끝나면 가비지 컬렉터(GC)를 기다리지 않고 즉시 메모리를 반환하여 렉을 방지
             using (NativeArray<byte> buffer = new NativeArray<byte>(size, Allocator.Temp))
             {
-                image.Convert(conversionParams, buffer);
-
+                image.Convert(conversionParams, buffer);    // 이미지로 변환
+                
+                // 텍스처 생성 및 데이터 버퍼 주입 후 픽셀 데이터를 GPU에 적용
                 Texture2D tempTexture = new Texture2D(scaledWidth, scaledHeight, TextureFormat.RGBA32, false);
                 tempTexture.LoadRawTextureData(buffer);
                 tempTexture.Apply();
 
                 Texture2D finalTexture = tempTexture;
-
+                
+                // 카메라에서 나오는 영상이 90도로 돌아가는 문제 및 거울모드로 나오는 문제 있어 바로잡는 부분 
                 if (rotateClockwise90)
                 {
                     finalTexture = RotateAndMirrorTexture(tempTexture, mirrorCorrection);
                     Destroy(tempTexture); 
                 }
-
+                
+                // jpg로 인코딩 후 Base64로 인코딩 후 엣지서버로 전송
                 byte[] imageBytes = finalTexture.EncodeToJPG(jpgQuality);
                 string base64String = System.Convert.ToBase64String(imageBytes);
 
                 websocket.SendText(base64String); 
                 debugMessage = $"✅ 전송 중.. ({scaledWidth}x{scaledHeight})\n틱레이트: {currentSendRate}초";
-
+                
+                // 텍스처 제거 
                 Destroy(finalTexture);
             }
         }
@@ -257,7 +268,7 @@ public class ARImageSender : MonoBehaviour
 
     private void ApplySettingsAndReconnect()
     {
-        // 1. 기기에 현재 입력된 값 저장 (앱을 꺼도 유지됨!)
+        // 기기에 현재 입력된 값 저장 (앱을 꺼도 유지됨!)
         PlayerPrefs.SetString("SavedIP", inputIp);
         PlayerPrefs.SetString("SavedPort", inputPort);
 
@@ -268,17 +279,17 @@ public class ARImageSender : MonoBehaviour
         }
         else
         {
-            debugMessage = "⚠️ 전송 주기는 숫자만 입력해주세요!";
+            debugMessage = " 전송 주기는 숫자만 입력해주세요!";
             return; 
         }
 
         // 디스크에 확실히 저장
         PlayerPrefs.Save(); 
 
-        // 2. 주소 조립 ("ws://" 와 "/ws"는 코드가 알아서 붙여줌)
+        // 주소 조립 ("ws://" 와 "/ws"는 코드가 알아서 붙여줌)
         currentServerUrl = $"ws://{inputIp}:{inputPort}/ws";
 
-        // 3. 재연결 수행
+        // 재연결 수행
         isBusy = false;
         timer = 0f;
         ConnectToServer();

@@ -47,7 +47,6 @@ public class ARObjectPlacer : MonoBehaviour
     private float messageTimer = 0f;
     private GUIStyle style;
     
-    // 3. 게임이 시작될 때 (Start 함수 추가) 값을 뺏어옵니다.
     void Start()
     {
         if (imageSenderScript != null)
@@ -80,7 +79,7 @@ public class ARObjectPlacer : MonoBehaviour
 
             if (response != null && response.status == "success" && response.results != null)
             {
-                string displayString = ""; // 화면에 띄울 메시지 조립용
+                string displayString = ""; // 화면에 띄울 메시지
 
                 foreach (var result in response.results)
                 {
