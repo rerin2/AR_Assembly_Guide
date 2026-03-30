@@ -5,12 +5,16 @@ using System.Text;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using Unity.Collections;
+using TMPro;
 
 public class ARImageSender : MonoBehaviour
 {
     [Header("Default Network Settings (최초 1회만 사용됨)")]
     public string defaultIp = "180.68.109.231";
     public string defaultPort = "8000";
+
+    [Header("UI References")] 
+    public TextMeshProUGUI statusTextUI;
     
     [Header("Capture Settings")]
     public float defaultSendRate = 0.01f; 
@@ -106,6 +110,11 @@ public class ARImageSender : MonoBehaviour
 
     void Update()
     {
+        if (statusTextUI != null)
+        {
+            statusTextUI.text = debugMessage;
+        }
+        
         #if !UNITY_WEBGL || UNITY_EDITOR
             if (websocket != null)
             {
@@ -185,7 +194,7 @@ public class ARImageSender : MonoBehaviour
                 string base64String = System.Convert.ToBase64String(imageBytes);
 
                 websocket.SendText(base64String); 
-                debugMessage = $"✅ 전송 중.. ({scaledWidth}x{scaledHeight})\n틱레이트: {currentSendRate}초";
+                debugMessage = $" 전송 중.. ({scaledWidth}x{scaledHeight})\n틱레이트: {currentSendRate}초";
                 
                 // 텍스처 제거 
                 Destroy(finalTexture);
@@ -232,66 +241,85 @@ public class ARImageSender : MonoBehaviour
         return resultTexture;
     }
 
-    void OnGUI()
+    // void OnGUI()
+    // {
+    //     if (style == null)
+    //     {
+    //         style = new GUIStyle(GUI.skin.label) { fontSize = 35 };
+    //         style.normal.textColor = Color.yellow;
+    //         style.wordWrap = true;
+    //
+    //         inputStyle = new GUIStyle(GUI.skin.textField) { fontSize = 35 };
+    //         buttonStyle = new GUIStyle(GUI.skin.button) { fontSize = 35 };
+    //     }
+    //
+    //     // 1. IP 주소 (가로로 배치)
+    //     GUI.Label(new Rect(20, 20, 80, 60), "IP:", style);
+    //     inputIp = GUI.TextField(new Rect(100, 20, 400, 60), inputIp, inputStyle);
+    //
+    //     // 2. 포트 번호 (IP 바로 옆에 배치)
+    //     GUI.Label(new Rect(520, 20, 100, 60), "포트:", style);
+    //     inputPort = GUI.TextField(new Rect(620, 20, 200, 60), inputPort, inputStyle);
+    //
+    //     // 3. 전송 주기
+    //     GUI.Label(new Rect(20, 100, 150, 60), "주기(초):", style);
+    //     inputSendRate = GUI.TextField(new Rect(180, 100, 150, 60), inputSendRate, inputStyle);
+    //
+    //     // 4. 저장 및 재연결 버튼
+    //     if (GUI.Button(new Rect(350, 100, 470, 60), "💾 저장 및 재연결", buttonStyle))
+    //     {
+    //         ApplySettingsAndReconnect();
+    //     }
+    //
+    //     // 5. 상태 메시지 출력
+    //     GUI.Label(new Rect(20, 180, Screen.width - 40, 500), debugMessage, style);
+    // }
+
+    // private void ApplySettingsAndReconnect()
+    // {
+    //     // 기기에 현재 입력된 값 저장 (앱을 꺼도 유지됨!)
+    //     PlayerPrefs.SetString("SavedIP", inputIp);
+    //     PlayerPrefs.SetString("SavedPort", inputPort);
+    //
+    //     if (float.TryParse(inputSendRate, out float parsedRate))
+    //     {
+    //         currentSendRate = parsedRate;
+    //         PlayerPrefs.SetFloat("SavedRate", currentSendRate);
+    //     }
+    //     else
+    //     {
+    //         debugMessage = " 전송 주기는 숫자만 입력해주세요!";
+    //         return; 
+    //     }
+    //
+    //     // 디스크에 확실히 저장
+    //     PlayerPrefs.Save(); 
+    //
+    //     // 주소 조립 ("ws://" 와 "/ws"는 코드가 알아서 붙여줌)
+    //     currentServerUrl = $"ws://{inputIp}:{inputPort}/ws";
+    //
+    //     // 재연결 수행
+    //     isBusy = false;
+    //     timer = 0f;
+    //     ConnectToServer();
+    // }
+    
+    // MenuUI.cs에서 호출할 수 있도록 반드시 public으로 설정!
+    public void ApplySettingsAndReconnect()
     {
-        if (style == null)
-        {
-            style = new GUIStyle(GUI.skin.label) { fontSize = 35 };
-            style.normal.textColor = Color.yellow;
-            style.wordWrap = true;
+        // MenuUI가 PlayerPrefs에 저장해둔 값을 꺼내옵니다. (기본값 설정)
+        string savedIpPort = PlayerPrefs.GetString("SavedIP", "127.0.0.1:8000");
+        currentSendRate = PlayerPrefs.GetFloat("SavedRate", 0.2f); // 예: 0.2초(초당 5번)
 
-            inputStyle = new GUIStyle(GUI.skin.textField) { fontSize = 35 };
-            buttonStyle = new GUIStyle(GUI.skin.button) { fontSize = 35 };
-        }
+        // 새로운 UI에서는 IP와 Port를 합쳐서 받으므로 조합식을 변경합니다.
+        // 사용자가 입력창에 "192.168.0.10:8000" 이라고 입력했다고 가정.
+        currentServerUrl = $"ws://{savedIpPort}/ws";
 
-        // 1. IP 주소 (가로로 배치)
-        GUI.Label(new Rect(20, 20, 80, 60), "IP:", style);
-        inputIp = GUI.TextField(new Rect(100, 20, 400, 60), inputIp, inputStyle);
-
-        // 2. 포트 번호 (IP 바로 옆에 배치)
-        GUI.Label(new Rect(520, 20, 100, 60), "포트:", style);
-        inputPort = GUI.TextField(new Rect(620, 20, 200, 60), inputPort, inputStyle);
-
-        // 3. 전송 주기
-        GUI.Label(new Rect(20, 100, 150, 60), "주기(초):", style);
-        inputSendRate = GUI.TextField(new Rect(180, 100, 150, 60), inputSendRate, inputStyle);
-
-        // 4. 저장 및 재연결 버튼
-        if (GUI.Button(new Rect(350, 100, 470, 60), "💾 저장 및 재연결", buttonStyle))
-        {
-            ApplySettingsAndReconnect();
-        }
-
-        // 5. 상태 메시지 출력
-        GUI.Label(new Rect(20, 180, Screen.width - 40, 500), debugMessage, style);
-    }
-
-    private void ApplySettingsAndReconnect()
-    {
-        // 기기에 현재 입력된 값 저장 (앱을 꺼도 유지됨!)
-        PlayerPrefs.SetString("SavedIP", inputIp);
-        PlayerPrefs.SetString("SavedPort", inputPort);
-
-        if (float.TryParse(inputSendRate, out float parsedRate))
-        {
-            currentSendRate = parsedRate;
-            PlayerPrefs.SetFloat("SavedRate", currentSendRate);
-        }
-        else
-        {
-            debugMessage = " 전송 주기는 숫자만 입력해주세요!";
-            return; 
-        }
-
-        // 디스크에 확실히 저장
-        PlayerPrefs.Save(); 
-
-        // 주소 조립 ("ws://" 와 "/ws"는 코드가 알아서 붙여줌)
-        currentServerUrl = $"ws://{inputIp}:{inputPort}/ws";
+        Debug.Log($"새로운 설정으로 연결 시도: {currentServerUrl}, 틱레이트: {currentSendRate}");
 
         // 재연결 수행
         isBusy = false;
-        timer = 0f;
+        // timer = 0f; // 필요하다면 주석 해제
         ConnectToServer();
     }
 
