@@ -1,11 +1,15 @@
 using UnityEngine;
 using TMPro; // TextMeshPro 사용을 위해 필수
+using UnityEngine.InputSystem;
 
 public class MenuUI : MonoBehaviour
 {
     [Header("UI Panels")]
     [SerializeField] private GameObject mainUIPanel;
     [SerializeField] private GameObject settingsPanel;
+    
+    // 앱 종료 확인 팝업
+    [SerializeField] private GameObject exitConfirmPanel;
 
     [Header("Input Fields (TMP)")]
     [SerializeField] private TMP_InputField serverIpInput; 
@@ -22,6 +26,36 @@ public class MenuUI : MonoBehaviour
         
         mainUIPanel.SetActive(true);
         settingsPanel.SetActive(false);
+        if (exitConfirmPanel != null) exitConfirmPanel.SetActive(false);
+    }
+    
+    // [새로 추가됨] 매 프레임마다 뒤로가기 버튼 입력을 감지합니다.
+    private void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            HandleBackButton();
+        }
+    }
+
+    // [새로 추가됨] 뒤로가기 버튼을 눌렀을 때의 동작 흐름
+    private void HandleBackButton()
+    {
+        // 1순위: 설정 창이 열려있다면 -> 창을 닫고 메인으로.
+        if (settingsPanel.activeSelf)
+        {
+            CloseSettingsOnly();
+        }
+        // 2순위: 앱 종료 팝업이 이미 떠있다면 -> 팝업을 닫는다.
+        else if (exitConfirmPanel != null && exitConfirmPanel.activeSelf)
+        {
+            CancelExitApp();
+        }
+        // 3순위: 열린 창이 아무것도 없다면(메인 화면) -> 앱 종료 팝업을 띄운다.
+        else
+        {
+            if (exitConfirmPanel != null) exitConfirmPanel.SetActive(true);
+        }
     }
 
     // 1. 톱니바퀴 버튼 (Gear_btn)
@@ -53,6 +87,22 @@ public class MenuUI : MonoBehaviour
     {
         SaveInputData(); // 현재 적힌 값으로 저장 후 
         arImageSender.ApplySettingsAndReconnect(); // 재연결 지시 (창은 안 닫음)
+    }
+    
+    // "예" 버튼
+    public void ConfirmExitApp()
+    {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+
+    // "아니요" 버튼
+    public void CancelExitApp()
+    {
+        if (exitConfirmPanel != null) exitConfirmPanel.SetActive(false);
     }
 
     // --- 내부 로직 ---
