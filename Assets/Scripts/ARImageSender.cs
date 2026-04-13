@@ -39,6 +39,8 @@ public class ARImageSender : MonoBehaviour
     public int scaledWidth;
     public int scaledHeight;
 
+    public LegoGuideManager legoGuideManager;
+
     // 내부적으로 사용할 진짜 연결 주소와 전송 주기
     private string currentServerUrl;
     private float currentSendRate;
@@ -101,6 +103,7 @@ public class ARImageSender : MonoBehaviour
             if (objectPlacer != null)
             {
                 objectPlacer.OnDataReceived(message);   // 데이터 처리 
+                legoGuideManager.OnDataReceived(message);
             }
             isBusy = false;
         };

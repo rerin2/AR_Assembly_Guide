@@ -703,15 +703,15 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 198967566}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.4007, y: 1.4007, z: 1.4007}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalScale: {x: 1.5987589, y: 1.5987589, z: 1.5987589}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 636489853}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -53.197998, y: -28.04895}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 1, y: 1}
 --- !u!1 &212114235
@@ -789,11 +789,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 212114235}
   m_CullTransparentMesh: 1
---- !u!1 &229515441 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8539328857710516819, guid: f74b374c62d8b564c9e907cede01ffc8, type: 3}
-  m_PrefabInstance: {fileID: 1597566240991053869}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &232260061
 GameObject:
   m_ObjectHideFlags: 0
@@ -1407,6 +1402,7 @@ MonoBehaviour:
   mirrorCorrection: 1
   scaledWidth: 0
   scaledHeight: 0
+  legoGuideManager: {fileID: 0}
 --- !u!114 &331264289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1570,7 +1566,7 @@ RectTransform:
   m_GameObject: {fileID: 349092894}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.4082, y: 2.4082, z: 2.4082}
+  m_LocalScale: {x: 2.862146, y: 2.862146, z: 2.862146}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1490023299}
@@ -1578,7 +1574,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 176}
+  m_AnchoredPosition: {x: 0, y: 169.19}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &349092896
@@ -2317,7 +2313,7 @@ RectTransform:
   m_GameObject: {fileID: 501792903}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.8129581, y: 1.8011159, z: 1.377}
+  m_LocalScale: {x: 2.1869714, y: 2.172686, z: 1.6610751}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2091363650}
@@ -3528,7 +3524,7 @@ RectTransform:
   m_GameObject: {fileID: 720315402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.45636243, y: 2.1299887, z: 2.4200292}
+  m_LocalScale: {x: 0.6070077, y: 2.8330982, z: 3.218881}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 351972247}
@@ -3536,7 +3532,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 78, y: -79}
+  m_AnchoredPosition: {x: 65.949005, y: -68.45398}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &720315404
@@ -8409,7 +8405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MarkerTrackingController
   arTrackedImageManager: {fileID: 1569006110}
-  _legoAnchorPrefab: {fileID: 229515441}
+  _legoAnchorPrefab: {fileID: 2466061677567510293, guid: e01dcca9f12b047419f33ada3c075b92, type: 3}
 --- !u!114 &1569006110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8456,7 +8452,7 @@ RectTransform:
   m_GameObject: {fileID: 1634648515}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.6716976, y: 1.7249, z: 1.7249}
+  m_LocalScale: {x: 3.183862, y: 1.7249, z: 1.7249}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 716787037}
@@ -9161,6 +9157,157 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1905935980}
   m_CullTransparentMesh: 1
+--- !u!1 &1911759704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1911759707}
+  - component: {fileID: 1911759706}
+  - component: {fileID: 1911759705}
+  m_Layer: 0
+  m_Name: Guide_Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1911759705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911759704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e3330633f7fa2458d7b0bcc40c4175, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LegoGuideManager
+  startAudio: {fileID: 8300000, guid: d9857251d0a6c844b8b2361c1ff1a65a, type: 3}
+  stepInstructions:
+  - {fileID: 8300000, guid: a827f8ff77f890d4ab3ff7d01e6ccfac, type: 3}
+  - {fileID: 8300000, guid: 46953d53f8246f74fa440b71e664e199, type: 3}
+  - {fileID: 8300000, guid: f517b1edaec64bf4a9e004198ac48749, type: 3}
+  completionAudio: {fileID: 8300000, guid: 8f16299f9443002468861511c9cd019c, type: 3}
+  successFeedback: {fileID: 8300000, guid: 0c999e64fe74fb44bb4eb053d8bae1d7, type: 3}
+  failFeedback: {fileID: 8300000, guid: 7803d45e10bcb6847ad4a5222f56019d, type: 3}
+  resetFeedback: {fileID: 8300000, guid: 8c14a8ef44949664fb79fd18992322ca, type: 3}
+--- !u!82 &1911759706
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911759704}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1911759707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911759704}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 294.20532, y: 0.30744, z: 14307.765}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1936784340
 GameObject:
   m_ObjectHideFlags: 0
@@ -9887,7 +10034,7 @@ RectTransform:
   m_GameObject: {fileID: 2029419869}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.6716976, y: 1.7249, z: 1.7249}
+  m_LocalScale: {x: 3.183862, y: 1.7249, z: 1.7249}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2076797201}
@@ -11465,3 +11612,4 @@ SceneRoots:
   - {fileID: 867039348}
   - {fileID: 3852799816452793594}
   - {fileID: 1597566240991053869}
+  - {fileID: 1911759707}
