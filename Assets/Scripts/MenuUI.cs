@@ -1,6 +1,6 @@
 using UnityEngine;
 using TMPro; // TextMeshPro 사용을 위해 필수
-using UnityEngine.InputSystem;
+
 
 public class MenuUI : MonoBehaviour
 {
@@ -21,6 +21,10 @@ public class MenuUI : MonoBehaviour
 
     private void Start()
     {
+        Screen.fullScreen = true;
+        Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        
         // 앱이 시작될 때 저장된 값을 불러오고, 설정창은 닫아둡니다.
         LoadSavedSettings();
         
@@ -29,34 +33,34 @@ public class MenuUI : MonoBehaviour
         if (exitConfirmPanel != null) exitConfirmPanel.SetActive(false);
     }
     
-    // [새로 추가됨] 매 프레임마다 뒤로가기 버튼 입력을 감지합니다.
-    private void Update()
+    public void OpenExitConfirmPanel()
     {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (exitConfirmPanel != null)
         {
-            HandleBackButton();
+            exitConfirmPanel.SetActive(true);
+            // 팝업이 뜰 때 다른 UI 조작을 막고 싶다면 여기에 추가 로직을 넣을 수 있습니다.
         }
     }
-
-    // [새로 추가됨] 뒤로가기 버튼을 눌렀을 때의 동작 흐름
-    private void HandleBackButton()
-    {
-        // 1순위: 설정 창이 열려있다면 -> 창을 닫고 메인으로.
-        if (settingsPanel.activeSelf)
-        {
-            CloseSettingsOnly();
-        }
-        // 2순위: 앱 종료 팝업이 이미 떠있다면 -> 팝업을 닫는다.
-        else if (exitConfirmPanel != null && exitConfirmPanel.activeSelf)
-        {
-            CancelExitApp();
-        }
-        // 3순위: 열린 창이 아무것도 없다면(메인 화면) -> 앱 종료 팝업을 띄운다.
-        else
-        {
-            if (exitConfirmPanel != null) exitConfirmPanel.SetActive(true);
-        }
-    }
+    
+    // // 뒤로가기 버튼을 눌렀을 때의 동작 흐름
+    // private void HandleBackButton()
+    // {
+    //     // 1순위: 설정 창이 열려있다면 -> 창을 닫고 메인으로.
+    //     if (settingsPanel.activeSelf)
+    //     {
+    //         CloseSettingsOnly();
+    //     }
+    //     // 2순위: 앱 종료 팝업이 이미 떠있다면 -> 팝업을 닫는다.
+    //     else if (exitConfirmPanel != null && exitConfirmPanel.activeSelf)
+    //     {
+    //         CancelExitApp();
+    //     }
+    //     // 3순위: 열린 창이 아무것도 없다면(메인 화면) -> 앱 종료 팝업을 띄운다.
+    //     else
+    //     {
+    //         if (exitConfirmPanel != null) exitConfirmPanel.SetActive(true);
+    //     }
+    // }
 
     // 1. 톱니바퀴 버튼 (Gear_btn)
     public void OpenSettings()
@@ -102,7 +106,10 @@ public class MenuUI : MonoBehaviour
     // "아니요" 버튼
     public void CancelExitApp()
     {
-        if (exitConfirmPanel != null) exitConfirmPanel.SetActive(false);
+        if (exitConfirmPanel != null)
+        {
+            exitConfirmPanel.SetActive(false);
+        }
     }
 
     // --- 내부 로직 ---

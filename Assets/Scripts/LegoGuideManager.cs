@@ -47,7 +47,7 @@ public class LegoGuideManager : MonoBehaviour
 
     private void ProcessLegoLogic(LegoData data)
     {
-        // 1. 상태 및 결과 판정에 따른 음성 출력
+        // 상태 및 결과 판정에 따른 음성 출력
         switch (data.message)
         {
             case "success":
@@ -71,7 +71,7 @@ public class LegoGuideManager : MonoBehaviour
                 return;
         }
 
-        // 2. 단계별 가이드 음성 출력 (단계가 변경되었거나 다시 가이드해야 할 때)
+        // 단계별 가이드 음성 출력 (단계가 변경되었거나 다시 가이드해야 할 때)
         if (data.status == "step_start" || data.message == "backtrack")
         {
             PlayStepInstruction(data.current_step);
